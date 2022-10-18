@@ -32,15 +32,12 @@ class Record:
     def remove_phone(self, phone):
         self.phones.remove(phone)
 
-    def edit_phone(self, old_phone, new_phone):
-        self.remove_phone(old_phone)
+    def edit_phone(self, phone, new_phone):
+        self.remove_phone(phone)
         self.add_phone(new_phone)
 
-    # def __repr__(self):
-    #    return f'{self.phone}'
-
-    # def __str__(self):
-    #     return f'{self.phones}'
+    def __repr__(self):
+        return f'{self.name.value}: {", ".join([phone.value for phone in self.phones])}'
 
 
 CONTACTS = AddressBook()
@@ -61,7 +58,7 @@ def corrector(handler):
     return wrapper
 
 
-def exit_func(contact_info):
+def exit_func(_=None):
     sys.exit('Work done. Bye!')
 
 
@@ -83,8 +80,7 @@ def add_contact_handler(contact_info):
 def find_contact_handler(contact_info):
     name = contact_info[0]
     record = CONTACTS.data[name]
-    for phone in record.phones:
-        print(phone.value)
+    print(repr(record))
 
 
 @ corrector
@@ -105,19 +101,20 @@ def change_contact_handler(contact_info):
     record = CONTACTS.data[name]
     for phone in record.phones:
         if phone.value == old_phone:
-            record.edit_phone(old_phone, new_phone)
+            record.edit_phone(phone, new_phone)
             print(
-                f'Phone "{old_phone.value}" was changed on"{new_phone.value}" for "{name}"')
+                f'Phone "{old_phone.value}" was changed on"{new_phone}" for "{name}"')
+            break
         print(f'No such number "{old_phone} for name "{name}"')
 
 
 @ corrector
-def hello_handler(contact_info):
+def hello_handler(_=None):
     print('Hello! How can I help you?')
 
 
 @ corrector
-def all_contacts_show_handler(contact_info):
+def all_contacts_show_handler(_=None):
     if len(CONTACTS.data) > 0:
         header = '| {:^15}| {:^15}|\n'.format('Name', 'Phone') + 35*'-'
         print(header)
@@ -139,8 +136,6 @@ COMMANDS = {
     'delete': delete_phone_handler,
     'hello': hello_handler,
     'show all': all_contacts_show_handler
-
-
 }
 
 
